@@ -1,0 +1,5 @@
+bin
+obj
+*.pdb
+*.user
+**/.DS_Store

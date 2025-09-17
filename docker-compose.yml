@@ -1,0 +1,70 @@
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ms-sql
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Your_strong_password123!
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Your_strong_password123!", "-No", "-l", "30", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: mq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  inventoryservice:
+    build: ./src/InventoryService
+    depends_on:
+      mssql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    environment:
+      - ASPNETCORE_URLS=http://+:8081
+      - ConnectionStrings__Default=Server=mssql,1433;Database=InventoryDb;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;
+      - JWT__Issuer=EcomDemo
+      - JWT__Audience=EcomClients
+      - JWT__Secret=super_secret_key_change_me
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Queue=order.confirmed
+    ports:
+      - "8081:8081"
+
+  salesservice:
+    build: ./src/SalesService
+    depends_on:
+      mssql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    environment:
+      - ASPNETCORE_URLS=http://+:8082
+      - ConnectionStrings__Default=Server=mssql,1433;Database=SalesDb;User Id=sa;Password=Your_strong_password123!;TrustServerCertificate=True;
+      - JWT__Issuer=EcomDemo
+      - JWT__Audience=EcomClients
+      - JWT__Secret=super_secret_key_change_me
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Queue=order.confirmed
+      - INVENTORY_BASE_URL=http://inventoryservice:8081
+    ports:
+      - "8082:8082"
+
+  apigateway:
+    build: ./src/ApiGateway
+    depends_on:
+      - inventoryservice
+      - salesservice
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - YARP__Clusters__inventory__Destinations__d1__Address=http://inventoryservice:8081/
+      - YARP__Clusters__sales__Destinations__d1__Address=http://salesservice:8082/
+    ports:
+      - "8080:8080"
