@@ -22,7 +22,9 @@ flowchart LR
     MQ -- Consome Evento --> Inventory
     Inventory --> DB1[(InventoryDb - SQL Server)]
     Sales --> DB2[(SalesDb - SQL Server)]
+```
 Serviços
+
 InventoryService 🏷️ — catálogo e estoque
 
 SalesService 📦 — pedidos e integração com estoque
