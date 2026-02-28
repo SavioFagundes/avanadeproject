@@ -4,7 +4,7 @@
 ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-Messaging-orange?logo=rabbitmq)  
 ![SQL Server](https://img.shields.io/badge/SQL%20Server-Database-red?logo=microsoftsqlserver)  
 ![Docker](https://img.shields.io/badge/Docker-Compose-blue?logo=docker)  
-![Tests](https://img.shields.io/badge/Tests-xUnit-green?logo=xunit)  
+![Tests](https://img.shields.io/badge/Tests-xUnit-green?logo=xunit)  w
 
 Este projeto implementa uma **arquitetura de microserviços** simples para um e-commerce, utilizando **.NET 8**, **RabbitMQ**, **SQL Server**, **YARP API Gateway** e **JWT** para autenticação.
 
