@@ -10,7 +10,7 @@ Este projeto implementa uma **arquitetura de microserviços** simples para um e-
 
 ---
 
-## 📐 Arquitetura
+## 📐 Arquiteturaa
 
 ```mermaid
 flowchart LR
